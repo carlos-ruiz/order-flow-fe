@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".", // Important: sets the base for path resolution
+    "paths": {
+      // The crucial part: "@/*" maps to the 'src' directory
+      // This pattern is often the one causing the lint error.
+      "@/*": ["./src/*"]
+    }
+  }
+}
