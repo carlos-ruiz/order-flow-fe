@@ -22,9 +22,9 @@ export function PlatformsTable({
   onDelete,
   onUpdate,
 }: {
-  platforms: Platform[];
-  onDelete?: (id: number) => void;
-  onUpdate?: (id: number, platform: Platform) => void;
+  readonly platforms: Platform[];
+  readonly onDelete?: (id: number) => void;
+  readonly onUpdate?: (id: number, platform: Platform) => void;
 }) {
   return (
     <Table>

@@ -1,5 +1,5 @@
-import { Dialog } from "./ui/dialog";
 import {
+  Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -25,7 +25,7 @@ export function CreatePlatformDialog({
   onOpenChange,
   onCreatePlatform,
   platform,
-}: CreatePlatformDialogProps) {
+}: Readonly<CreatePlatformDialogProps>) {
   const isEditing = !!platform;
   const [formData, setFormData] = useState({
     name: "",
