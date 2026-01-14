@@ -1,0 +1,6 @@
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "SonarLint Cloud FE",
+    "projectKey": "carlos-ruiz_order-flow-fe"
+  }
+}
