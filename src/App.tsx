@@ -6,7 +6,7 @@ import { Platforms } from "./pages/Platforms";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-6 space-y-4 max-w-7xl mx-auto">
       <HeaderMenu />
       <Routes>
         <Route path="/" element={<Dashboard />} />
