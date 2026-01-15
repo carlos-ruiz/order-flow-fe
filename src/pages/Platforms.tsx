@@ -66,14 +66,22 @@ export function Platforms() {
 
   return (
     <>
-      <Button
-        onClick={() => {
-          setSelectedPlatform(null);
-          setOpenDialog(true);
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "1rem",
         }}
       >
-        Nueva plataforma
-      </Button>
+        <Button
+          onClick={() => {
+            setSelectedPlatform(null);
+            setOpenDialog(true);
+          }}
+        >
+          Nueva plataforma
+        </Button>
+      </div>
       <CreatePlatformDialog
         open={openDialog}
         onOpenChange={setOpenDialog}
@@ -86,7 +94,7 @@ export function Platforms() {
       <PlatformsTable
         platforms={platforms}
         onDelete={handleDeletePlatform}
-        onUpdate={(id, platform) => {
+        onUpdate={(platform) => {
           setSelectedPlatform(platform);
           setOpenDialog(true);
         }}

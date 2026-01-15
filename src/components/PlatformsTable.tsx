@@ -24,7 +24,7 @@ export function PlatformsTable({
 }: {
   readonly platforms: Platform[];
   readonly onDelete?: (id: number) => void;
-  readonly onUpdate?: (id: number, platform: Platform) => void;
+  readonly onUpdate?: (platform: Platform) => void;
 }) {
   return (
     <Table>
@@ -50,9 +50,7 @@ export function PlatformsTable({
               )}
             </TableCell>
             <TableCell className="flex justify-start gap-2">
-              <Button onClick={() => onUpdate?.(platform.id, platform)}>
-                Editar
-              </Button>
+              <Button onClick={() => onUpdate?.(platform)}>Editar</Button>
               <Button
                 onClick={() => onDelete?.(platform.id)}
                 variant="destructive"
