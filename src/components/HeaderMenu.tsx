@@ -21,6 +21,9 @@ export function HeaderMenu() {
           <li className="text-sm font-medium hover:text-primary hover:underline">
             <Link to="/platforms">Plataformas</Link>
           </li>
+          <li className="text-sm font-medium hover:text-primary hover:underline">
+            <Link to="/sellers">Vendedores</Link>
+          </li>
         </ul>
       </nav>
     </div>
