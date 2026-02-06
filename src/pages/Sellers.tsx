@@ -35,7 +35,14 @@ export function Sellers() {
       .then((r) => r.json())
       .then(setSellers)
       .catch((err: unknown) => {
-        console.error("Error al cargar los vendedores", err);
+        setAlert({
+          type: "error",
+          title: "Error al cargar los vendedores",
+          message:
+            err instanceof Error
+              ? err.message
+              : "Error al cargar los vendedores",
+        });
         setSellers([]);
       });
   }, []);
