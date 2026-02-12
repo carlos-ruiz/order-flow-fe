@@ -5,7 +5,7 @@ interface OrderStatsProps {
   stats: {
     totalOrders: number;
     totalRevenue: number;
-    pendingOrders: number;
+    processingOrders: number;
     completedOrders: number;
   };
 }
@@ -13,28 +13,28 @@ interface OrderStatsProps {
 export function OrderStats({ stats }: OrderStatsProps) {
   const statCards = [
     {
-      title: "Total Orders",
+      title: "Total de Pedidos",
       value: stats.totalOrders,
       icon: Package,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
-      title: "Total Revenue",
+      title: "Ingresos Totales",
       value: `$${stats.totalRevenue.toLocaleString()}`,
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
-      title: "Pending",
-      value: stats.pendingOrders,
+      title: "En proceso",
+      value: stats.processingOrders,
       icon: Clock,
       color: "text-yellow-600",
       bgColor: "bg-yellow-50",
     },
     {
-      title: "Completed",
+      title: "Completadas",
       value: stats.completedOrders,
       icon: CheckCircle,
       color: "text-emerald-600",

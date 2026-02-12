@@ -8,178 +8,156 @@ import { Button } from "../components/ui/button";
 import { Plus } from "lucide-react";
 import { getApiUrl } from "../config/api";
 
-const initialOrders: Order[] = [
-  {
-    id: "ORD-001",
-    customer: "John Smith",
-    email: "john.smith@example.com",
-    product: "Wireless Headphones",
-    amount: 299,
-    status: "delivered",
-    date: "2025-09-28",
-    quantity: 1,
-  },
-  {
-    id: "ORD-002",
-    customer: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    product: "Smart Watch Pro",
-    amount: 449,
-    status: "shipped",
-    date: "2025-09-29",
-    quantity: 1,
-  },
-  {
-    id: "ORD-003",
-    customer: "Michael Chen",
-    email: "m.chen@example.com",
-    product: "Laptop Stand",
-    amount: 89,
-    status: "processing",
-    date: "2025-09-30",
-    quantity: 2,
-  },
-  {
-    id: "ORD-004",
-    customer: "Emily Brown",
-    email: "emily.brown@example.com",
-    product: "Mechanical Keyboard",
-    amount: 159,
-    status: "pending",
-    date: "2025-10-01",
-    quantity: 1,
-  },
-  {
-    id: "ORD-005",
-    customer: "David Wilson",
-    email: "d.wilson@example.com",
-    product: "USB-C Hub",
-    amount: 79,
-    status: "delivered",
-    date: "2025-09-27",
-    quantity: 3,
-  },
-  {
-    id: "ORD-006",
-    customer: "Lisa Anderson",
-    email: "lisa.a@example.com",
-    product: "Webcam HD",
-    amount: 129,
-    status: "processing",
-    date: "2025-09-30",
-    quantity: 1,
-  },
-  {
-    id: "ORD-007",
-    customer: "James Martinez",
-    email: "j.martinez@example.com",
-    product: "Monitor 27inch",
-    amount: 399,
-    status: "shipped",
-    date: "2025-09-29",
-    quantity: 1,
-  },
-  {
-    id: "ORD-008",
-    customer: "Jessica Lee",
-    email: "jessica.lee@example.com",
-    product: "Desk Mat",
-    amount: 39,
-    status: "cancelled",
-    date: "2025-09-26",
-    quantity: 2,
-  },
-];
+export type Status = {
+  id: string;
+  name: string;
+  active: boolean;
+};
+
+export type Platform = {
+  id: string;
+  name: string;
+  active: boolean;
+  customerFee: number;
+  sellerCommission: number;
+};
 
 export function Dashboard() {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [platformsFilter, setPlatformsFilter] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [statuses, setStatuses] = useState<Status[]>([]);
 
   useEffect(() => {
     // Load orders from an API or local storage
     const fetchOrders = () => {
-      // Simulate API call
-      // const response = await fetch('/api/orders');
-      // const data = await response.json();
-      // setOrders(data);\
-      fetch(getApiUrl("orderItems"))
+      fetch(getApiUrl("orders"))
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
-          // setOrders(data);\
-          setOrders(initialOrders); // Using initialOrders as mock data for now
+          console.log("Fetched orders:", data);
+          setOrders(Array.isArray(data) ? data : []); // Ensure we set an array of orders
+          // setOrders(initialOrders); // Using initialOrders as mock data for now
         })
         .catch((err: unknown) => {
           console.error("Error fetching orders:", err);
-          setOrders(initialOrders); // Fallback to initial orders on error
+          setOrders([]); // Fallback to empty orders on error
+        });
+    };
+
+    const fetchPlatforms = () => {
+      fetch(getApiUrl("platforms"))
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Fetched platforms:", data);
+          setPlatforms(Array.isArray(data) ? data : []);
+        })
+        .catch((err: unknown) => {
+          console.error("Error fetching platforms:", err);
+          setPlatforms([]);
+        });
+    };
+
+    const fetchStatuses = () => {
+      fetch(getApiUrl("statuses"))
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Fetched statuses:", data);
+          setStatuses(Array.isArray(data) ? data : []);
+        })
+        .catch((err: unknown) => {
+          console.error("Error fetching statuses:", err);
+          setStatuses([]);
         });
     };
 
     fetchOrders();
+    fetchPlatforms();
+    fetchStatuses();
   }, []);
 
   // Filter orders based on search and status
   const filteredOrders = useMemo(() => {
     return orders.filter((order: Order) => {
+      console.log("Filtering order:", order);
+      console.log("Current filters:", {
+        searchTerm,
+        statusFilter,
+        platformsFilter,
+      });
       const matchesSearch =
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.email.toLowerCase().includes(searchTerm.toLowerCase());
+        order.id == searchTerm ||
+        searchTerm === "" ||
+        order.platformName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.statusName?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === "all" || order.status === statusFilter;
+        statusFilter === "all" || order.statusName === statusFilter;
 
-      return matchesSearch && matchesStatus;
+      const matchesPlatform =
+        platformsFilter === "all" || order.platformName === platformsFilter;
+
+      return matchesSearch && matchesStatus && matchesPlatform;
     });
-  }, [orders, searchTerm, statusFilter]);
+  }, [orders, searchTerm, statusFilter, platformsFilter]);
 
   // Calculate stats
   const stats = useMemo(() => {
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce(
-      (sum: number, order: Order) => sum + order.amount,
-      0
+      (sum: number, order: Order) => sum + order.totalAmount,
+      0,
     );
-    const pendingOrders = orders.filter(
-      (o: Order) => o.status === "pending"
+    const processingOrders = orders.filter(
+      (o: Order) => o.statusName === "processing",
     ).length;
     const completedOrders = orders.filter(
-      (o: Order) => o.status === "delivered"
+      (o: Order) => o.statusName === "completed",
     ).length;
 
     return {
       totalOrders,
       totalRevenue,
-      pendingOrders,
+      processingOrders,
       completedOrders,
     };
   }, [orders]);
 
-  const handleStatusChange = (orderId: string, newStatus: Order["status"]) => {
+  const handleStatusChange = (
+    orderId: string | undefined,
+    newStatus: Order["statusName"],
+  ) => {
     setOrders((prevOrders: Order[]) =>
       prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
+        order.id === orderId ? { ...order, statusName: newStatus } : order,
+      ),
     );
   };
 
-  const handleDelete = (orderId: string) => {
+  const handleDelete = (orderId: string | undefined) => {
     setOrders((prevOrders: Order[]) =>
-      prevOrders.filter((order) => order.id !== orderId)
+      prevOrders.filter((order) => order.id !== orderId),
     );
   };
 
-  const handleCreateOrder = (newOrder: Omit<Order, "id">) => {
+  const handleCreateOrder = async (newOrder: Omit<Order, "id">) => {
     // Generate a new order ID
-    const newId = `ORD-${String(orders.length + 1).padStart(3, "0")}`;
+    // const newId = `ORD-${String(orders.length + 1).padStart(3, "0")}`;
     const orderWithId: Order = {
-      id: newId,
       ...newOrder,
     };
-    setOrders((prevOrders) => [orderWithId, ...prevOrders]);
+    console.log("Creating order:", orderWithId);
+    const res = await fetch(getApiUrl("orders"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderWithId),
+    });
+    const data: unknown = await res.json();
+    const created = data as Order;
+
+    setOrders((prevOrders) => [created, ...prevOrders]);
   };
 
   return (
@@ -210,6 +188,10 @@ export function Dashboard() {
         onSearchChange={setSearchTerm}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
+        platformsFilter={platformsFilter}
+        onPlatformsFilterChange={setPlatformsFilter}
+        platforms={platforms}
+        statuses={statuses}
       />
 
       {/* Orders Table */}
@@ -222,7 +204,11 @@ export function Dashboard() {
       <CreateOrderDialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
-        onCreateOrder={handleCreateOrder}
+        onCreateOrder={(order) => {
+          void handleCreateOrder(order);
+        }}
+        platforms={platforms}
+        statuses={statuses}
       />
     </div>
   );

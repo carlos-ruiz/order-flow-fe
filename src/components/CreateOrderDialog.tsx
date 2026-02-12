@@ -18,50 +18,46 @@ import {
   SelectValue,
 } from "./ui/select";
 import { type Order } from "./OrdersTable";
+import { type Platform, type Status } from "../pages/Dashboard";
 
 interface CreateOrderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreateOrder: (order: Omit<Order, "id">) => void;
+  platforms: Platform[];
+  statuses: Status[];
 }
 
 export function CreateOrderDialog({
   open,
   onOpenChange,
   onCreateOrder,
+  platforms,
+  statuses,
 }: CreateOrderDialogProps) {
   const [formData, setFormData] = useState({
-    customer: "",
-    email: "",
-    product: "",
-    quantity: "1",
-    amount: "",
-    status: "pending" as Order["status"],
-    date: new Date().toISOString().split("T")[0],
+    dateTime: new Date().toISOString().slice(0, 16), // ISO string for datetime-local
+    totalAmount: "0",
+    status: statuses[0]?.id || "",
+    platform: platforms[0]?.id || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     onCreateOrder({
-      customer: formData.customer,
-      email: formData.email,
-      product: formData.product,
-      quantity: parseInt(formData.quantity),
-      amount: parseFloat(formData.amount),
-      status: formData.status,
-      date: formData.date,
+      dateTime: formData.dateTime,
+      platformId: formData.platform,
+      totalAmount: parseFloat(formData.totalAmount) || 0,
+      statusId: formData.status,
     });
 
     // Reset form
     setFormData({
-      customer: "",
-      email: "",
-      product: "",
-      quantity: "1",
-      amount: "",
-      status: "pending",
-      date: new Date().toISOString().split("T")[0],
+      totalAmount: "0",
+      status: statuses[0]?.id || "",
+      dateTime: new Date().toISOString().slice(0, 16),
+      platform: platforms[0]?.id || "",
     });
 
     onOpenChange(false);
@@ -84,78 +80,6 @@ export function CreateOrderDialog({
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="customer">Nombre del cliente</Label>
-                <Input
-                  id="customer"
-                  value={formData.customer}
-                  onChange={(e) => {
-                    handleChange("customer", e.target.value);
-                  }}
-                  placeholder="Juan Pérez"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => {
-                    handleChange("email", e.target.value);
-                  }}
-                  placeholder="juanperez@gmail.com"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="product">Producto</Label>
-              <Input
-                id="product"
-                value={formData.product}
-                onChange={(e) => {
-                  handleChange("product", e.target.value);
-                }}
-                placeholder="Nombre del producto"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="quantity">Cantidad</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  value={formData.quantity}
-                  onChange={(e) => {
-                    handleChange("quantity", e.target.value);
-                  }}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="amount">Importe (por pieza) ($)</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.amount}
-                  onChange={(e) => {
-                    handleChange("amount", e.target.value);
-                  }}
-                  placeholder="0.00"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
                 <Label htmlFor="status">Estado</Label>
                 <Select
                   value={formData.status}
@@ -167,25 +91,49 @@ export function CreateOrderDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pending">Pendiente</SelectItem>
-                    <SelectItem value="processing">En proceso</SelectItem>
-                    <SelectItem value="shipped">Enviado</SelectItem>
-                    <SelectItem value="delivered">Entregado</SelectItem>
-                    <SelectItem value="cancelled">Cancelado</SelectItem>
+                    {statuses
+                      .filter((s) => s.active)
+                      .map((status) => (
+                        <SelectItem key={status.id} value={status.id}>
+                          {status.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="date">Fecha</Label>
                 <Input
-                  id="date"
-                  type="date"
-                  value={formData.date}
+                  id="dateTime"
+                  type="datetime"
+                  value={formData.dateTime}
                   onChange={(e) => {
-                    handleChange("date", e.target.value);
+                    handleChange("dateTime", e.target.value);
                   }}
                   required
                 />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="platform">Plataforma</Label>
+                <Select
+                  value={formData.platform}
+                  onValueChange={(value: string) => {
+                    handleChange("platform", value);
+                  }}
+                >
+                  <SelectTrigger id="platform">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {platforms.map((platform) => (
+                      <SelectItem key={platform.id} value={platform.id}>
+                        {platform.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

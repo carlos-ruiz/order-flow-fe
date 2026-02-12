@@ -18,20 +18,22 @@ import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
 import { OrderDetailsDialog } from "./OrderDetailsDialog";
 
 export interface Order {
-  id: string;
-  customer: string;
-  email: string;
-  product: string;
-  amount: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  date: string;
-  quantity: number;
+  id?: string;
+  platformId?: string;
+  platformName?: string;
+  statusId: string;
+  statusName?: string;
+  dateTime: string;
+  totalAmount: number;
 }
 
 interface OrdersTableProps {
   orders: Order[];
-  onStatusChange: (orderId: string, newStatus: Order["status"]) => void;
-  onDelete: (orderId: string) => void;
+  onStatusChange: (
+    orderId: string | undefined,
+    newStatus: Order["statusName"],
+  ) => void;
+  onDelete: (orderId: string | undefined) => void;
 }
 
 export function OrdersTable({
@@ -42,17 +44,13 @@ export function OrdersTable({
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const getStatusColor = (status: Order["status"]) => {
+  const getStatusColor = (status: Order["statusName"]) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
       case "processing":
         return "bg-blue-100 text-blue-800 hover:bg-blue-100";
-      case "shipped":
+      case "completed":
         return "bg-purple-100 text-purple-800 hover:bg-purple-100";
-      case "delivered":
-        return "bg-green-100 text-green-800 hover:bg-green-100";
-      case "cancelled":
+      case "canceled":
         return "bg-red-100 text-red-800 hover:bg-red-100";
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-100";
@@ -70,35 +68,28 @@ export function OrdersTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>ID de Pedido</TableHead>
+              <TableHead>Plataforma</TableHead>
+              <TableHead>Estatus</TableHead>
+              <TableHead>Fecha</TableHead>
+              <TableHead className="text-right">Monto Total</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell>{order.id}</TableCell>
+                <TableCell>{order.platformName || "N/A"}</TableCell>
                 <TableCell>
-                  <div>
-                    <div>{order.customer}</div>
-                    <div className="text-muted-foreground">{order.email}</div>
-                  </div>
-                </TableCell>
-                <TableCell>{order.product}</TableCell>
-                <TableCell>{order.quantity}</TableCell>
-                <TableCell>${order.amount.toLocaleString()}</TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(order.status)}>
-                    {order.status}
+                  <Badge className={getStatusColor(order.statusName)}>
+                    {order.statusName || "N/A"}
                   </Badge>
                 </TableCell>
-                <TableCell>{order.date}</TableCell>
+                <TableCell>{order.dateTime}</TableCell>
+                <TableCell className="text-right">
+                  {order.totalAmount.toFixed(2)}
+                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0">
@@ -115,15 +106,15 @@ export function OrdersTable({
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
-                          onStatusChange(order.id, "delivered");
+                          onStatusChange(order.id, "completed");
                         }}
                       >
                         <Edit className="mr-2 h-4 w-4" />
-                        Marcar como Entregado
+                        Marcar como completado
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
-                          onStatusChange(order.id, "cancelled");
+                          onStatusChange(order.id, "canceled");
                         }}
                       >
                         <Edit className="mr-2 h-4 w-4" />
