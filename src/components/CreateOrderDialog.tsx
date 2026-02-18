@@ -34,7 +34,7 @@ export function CreateOrderDialog({
   onCreateOrder,
   platforms,
   statuses,
-}: CreateOrderDialogProps) {
+}: Readonly<CreateOrderDialogProps>) {
   const [formData, setFormData] = useState({
     dateTime: new Date().toISOString().slice(0, 16), // ISO string for datetime-local
     totalAmount: "0",

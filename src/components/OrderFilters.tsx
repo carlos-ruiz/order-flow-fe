@@ -29,7 +29,7 @@ export function OrderFilters({
   onPlatformsFilterChange,
   platforms,
   statuses,
-}: OrderFiltersProps) {
+}: Readonly<OrderFiltersProps>) {
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <div className="relative flex-1">
