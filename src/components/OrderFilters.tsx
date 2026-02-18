@@ -1,3 +1,4 @@
+import type { Platform, Status } from "../pages/Dashboard";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -13,6 +14,10 @@ interface OrderFiltersProps {
   onSearchChange: (value: string) => void;
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
+  platformsFilter: string;
+  onPlatformsFilterChange: (value: string) => void;
+  platforms: Platform[];
+  statuses: Status[];
 }
 
 export function OrderFilters({
@@ -20,6 +25,10 @@ export function OrderFilters({
   onSearchChange,
   statusFilter,
   onStatusFilterChange,
+  platformsFilter,
+  onPlatformsFilterChange,
+  platforms,
+  statuses,
 }: OrderFiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4">
@@ -39,12 +48,25 @@ export function OrderFilters({
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Orders</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="processing">Processing</SelectItem>
-          <SelectItem value="shipped">Shipped</SelectItem>
-          <SelectItem value="delivered">Delivered</SelectItem>
-          <SelectItem value="cancelled">Cancelled</SelectItem>
+          <SelectItem value="all">Todos los estados</SelectItem>
+          {statuses.map((status) => (
+            <SelectItem key={status.id} value={status.name}>
+              {status.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select value={platformsFilter} onValueChange={onPlatformsFilterChange}>
+        <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectValue placeholder="Filter by platform" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Todas las plataformas</SelectItem>
+          {platforms.map((platform) => (
+            <SelectItem key={platform.id} value={platform.name}>
+              {platform.name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
