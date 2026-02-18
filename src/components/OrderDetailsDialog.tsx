@@ -19,8 +19,8 @@ export function OrderDetailsDialog({
   order,
   open,
   onOpenChange,
-}: OrderDetailsDialogProps) {
-  const getStatusColor = (status: Order["status"]) => {
+}: Readonly<OrderDetailsDialogProps>) {
+  const getStatusColor = (status: Order["statusName"]) => {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
@@ -54,8 +54,8 @@ export function OrderDetailsDialog({
             </div>
             <div>
               <p className="text-muted-foreground mb-1">Status</p>
-              <Badge className={getStatusColor(order.status)}>
-                {order.status}
+              <Badge className={getStatusColor(order.statusName)}>
+                {order.statusName}
               </Badge>
             </div>
           </div>
@@ -63,15 +63,11 @@ export function OrderDetailsDialog({
           <Separator />
 
           <div>
-            <h4 className="mb-3">Customer Information</h4>
+            <h4 className="mb-3">Plataforma</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-muted-foreground mb-1">Name</p>
-                <p>{order.customer}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-1">Email</p>
-                <p>{order.email}</p>
+                <p className="text-muted-foreground mb-1">Plataforma</p>
+                <p>{order.platformName}</p>
               </div>
             </div>
           </div>
@@ -79,26 +75,16 @@ export function OrderDetailsDialog({
           <Separator />
 
           <div>
-            <h4 className="mb-3">Order Information</h4>
+            <h4 className="mb-3">Información de la Órden</h4>
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-muted-foreground mb-1">Product</p>
-                  <p>{order.product}</p>
+                  <p className="text-muted-foreground mb-1">Fecha</p>
+                  <p>{order.dateTime}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Quantity</p>
-                  <p>{order.quantity}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-muted-foreground mb-1">Order Date</p>
-                  <p>{order.date}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground mb-1">Amount</p>
-                  <p>${order.amount.toLocaleString()}</p>
+                  <p className="text-muted-foreground mb-1">Monto total</p>
+                  <p>{order.totalAmount}</p>
                 </div>
               </div>
             </div>

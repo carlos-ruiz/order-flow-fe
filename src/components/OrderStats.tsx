@@ -10,7 +10,7 @@ interface OrderStatsProps {
   };
 }
 
-export function OrderStats({ stats }: OrderStatsProps) {
+export function OrderStats({ stats }: Readonly<OrderStatsProps>) {
   const statCards = [
     {
       title: "Total de Pedidos",

@@ -40,7 +40,7 @@ export function OrdersTable({
   orders,
   onStatusChange,
   onDelete,
-}: OrdersTableProps) {
+}: Readonly<OrdersTableProps>) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
