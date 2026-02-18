@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,6 @@ import {
 } from "./ui/select";
 import { type Order } from "./OrdersTable";
 import { type Platform, type Status } from "../pages/Dashboard";
-import { useEffect } from "react";
 
 interface CreateOrderDialogProps {
   open: boolean;
@@ -64,7 +63,7 @@ export function CreateOrderDialog({
     onCreateOrder({
       dateTime: formData.dateTime,
       platformId: formData.platform,
-      totalAmount: parseFloat(formData.totalAmount) || 0,
+      totalAmount: Number.parseFloat(formData.totalAmount) || 0,
       statusId: formData.status,
     });
 

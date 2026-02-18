@@ -31,76 +31,61 @@ export function Dashboard() {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
 
+  // Extracted fetchers
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch(getApiUrl("orders"));
+      const data: unknown = await res.json();
+      setOrders(Array.isArray(data) ? (data as Order[]) : []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setOrders([]);
+    }
+  };
+
+  const fetchPlatforms = async () => {
+    try {
+      const res = await fetch(getApiUrl("platforms"));
+      const data: unknown = await res.json();
+      setPlatforms(
+        Array.isArray(data)
+          ? (data as Platform[]).map((p) => ({
+              ...p,
+              id: typeof p.id === "string" ? p.id : String(p.id),
+            }))
+          : [],
+      );
+    } catch (err) {
+      console.error("Error fetching platforms:", err);
+      setPlatforms([]);
+    }
+  };
+
+  const fetchStatuses = async () => {
+    try {
+      const res = await fetch(getApiUrl("statuses"));
+      const data: unknown = await res.json();
+      setStatuses(
+        Array.isArray(data)
+          ? (data as Status[]).map((s) => ({
+              ...s,
+              id: typeof s.id === "string" ? s.id : String(s.id),
+            }))
+          : [],
+      );
+    } catch (err) {
+      console.error("Error fetching statuses:", err);
+      setStatuses([]);
+    }
+  };
+
   useEffect(() => {
-    // Load orders from an API or local storage
-    const fetchOrders = () => {
-      fetch(getApiUrl("orders"))
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched orders:", data);
-          setOrders(Array.isArray(data) ? data : []); // Ensure we set an array of orders
-          // setOrders(initialOrders); // Using initialOrders as mock data for now
-        })
-        .catch((err: unknown) => {
-          console.error("Error fetching orders:", err);
-          setOrders([]); // Fallback to empty orders on error
-        });
-    };
-
-    const fetchPlatforms = () => {
-      fetch(getApiUrl("platforms"))
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched platforms:", data);
-          setPlatforms(
-            Array.isArray(data)
-              ? data.map((p: Platform) => ({
-                  ...p,
-                  id: typeof p.id === "string" ? p.id : String(p.id),
-                }))
-              : [],
-          );
-        })
-        .catch((err: unknown) => {
-          console.error("Error fetching platforms:", err);
-          setPlatforms([]);
-        });
-    };
-
-    const fetchStatuses = () => {
-      fetch(getApiUrl("statuses"))
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched statuses:", data);
-          setStatuses(
-            Array.isArray(data)
-              ? data.map((s: Status) => ({
-                  ...s,
-                  id: typeof s.id === "string" ? s.id : String(s.id),
-                }))
-              : [],
-          );
-        })
-        .catch((err: unknown) => {
-          console.error("Error fetching statuses:", err);
-          setStatuses([]);
-        });
-    };
-
-    fetchOrders();
-    fetchPlatforms();
-    fetchStatuses();
+    void Promise.all([fetchOrders(), fetchPlatforms(), fetchStatuses()]);
   }, []);
 
   // Filter orders based on search and status
   const filteredOrders = useMemo(() => {
     return orders.filter((order: Order) => {
-      console.log("Filtering order:", order);
-      console.log("Current filters:", {
-        searchTerm,
-        statusFilter,
-        platformsFilter,
-      });
       const matchesSearch =
         order.id == searchTerm ||
         searchTerm === "" ||
@@ -162,7 +147,6 @@ export function Dashboard() {
     const orderWithId: Order = {
       ...newOrder,
     };
-    console.log("Creating order:", orderWithId);
     const res = await fetch(getApiUrl("orders"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
