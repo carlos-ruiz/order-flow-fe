@@ -19,6 +19,7 @@ import {
 } from "./ui/select";
 import { type Order } from "./OrdersTable";
 import { type Platform, type Status } from "../pages/Dashboard";
+import { useEffect } from "react";
 
 interface CreateOrderDialogProps {
   open: boolean;
@@ -42,6 +43,21 @@ export function CreateOrderDialog({
     platform: platforms[0]?.id || "",
   });
 
+  useEffect(() => {
+    if (statuses.length > 0 && !formData.status) {
+      setFormData((prev) => ({
+        ...prev,
+        status: statuses[0].id,
+      }));
+    }
+    if (platforms.length > 0 && !formData.platform) {
+      setFormData((prev) => ({
+        ...prev,
+        platform: platforms[0].id,
+      }));
+    }
+  }, [statuses, platforms, formData.status, formData.platform]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -64,6 +80,7 @@ export function CreateOrderDialog({
   };
 
   const handleChange = (field: string, value: string) => {
+    console.log(`Changing ${field} to ${value}`);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -88,7 +105,9 @@ export function CreateOrderDialog({
                   }}
                 >
                   <SelectTrigger id="status">
-                    <SelectValue />
+                    <SelectValue>
+                      {statuses.find((s) => s.id === formData.status)?.name}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {statuses
@@ -124,7 +143,10 @@ export function CreateOrderDialog({
                   }}
                 >
                   <SelectTrigger id="platform">
-                    <SelectValue />
+                    <SelectValue>
+                      {platforms.find((p) => p.id === formData.platform)
+                        ?.name || "Selecciona una plataforma"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {platforms.map((platform) => (

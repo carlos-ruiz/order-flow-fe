@@ -52,7 +52,14 @@ export function Dashboard() {
         .then((res) => res.json())
         .then((data) => {
           console.log("Fetched platforms:", data);
-          setPlatforms(Array.isArray(data) ? data : []);
+          setPlatforms(
+            Array.isArray(data)
+              ? data.map((p: Platform) => ({
+                  ...p,
+                  id: typeof p.id === "string" ? p.id : String(p.id),
+                }))
+              : [],
+          );
         })
         .catch((err: unknown) => {
           console.error("Error fetching platforms:", err);
@@ -65,7 +72,14 @@ export function Dashboard() {
         .then((res) => res.json())
         .then((data) => {
           console.log("Fetched statuses:", data);
-          setStatuses(Array.isArray(data) ? data : []);
+          setStatuses(
+            Array.isArray(data)
+              ? data.map((s: Status) => ({
+                  ...s,
+                  id: typeof s.id === "string" ? s.id : String(s.id),
+                }))
+              : [],
+          );
         })
         .catch((err: unknown) => {
           console.error("Error fetching statuses:", err);
