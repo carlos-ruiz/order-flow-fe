@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -15,7 +14,18 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
-import { OrderDetailsDialog } from "./OrderDetailsDialog";
+import { useNavigate } from "react-router-dom";
+
+interface OrderItem {
+  id: string;
+  customerName: string;
+  price: number;
+  quantity: number;
+  sellerName: string;
+  statusId: string;
+  taxAmount: number;
+  product: string;
+}
 
 export interface Order {
   id?: string;
@@ -25,6 +35,7 @@ export interface Order {
   statusName?: string;
   dateTime: string;
   totalAmount: number;
+  items: OrderItem[];
 }
 
 interface OrdersTableProps {
@@ -41,8 +52,7 @@ export function OrdersTable({
   onStatusChange,
   onDelete,
 }: Readonly<OrdersTableProps>) {
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const getStatusColor = (status: Order["statusName"]) => {
     switch (status) {
@@ -55,11 +65,6 @@ export function OrdersTable({
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-100";
     }
-  };
-
-  const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order);
-    setIsDetailsOpen(true);
   };
 
   return (
@@ -98,7 +103,9 @@ export function OrdersTable({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
                         onClick={() => {
-                          handleViewDetails(order);
+                          if (order.id) {
+                            void navigate(`/orders/${order.id}`);
+                          }
                         }}
                       >
                         <Eye className="mr-2 h-4 w-4" />
@@ -137,14 +144,6 @@ export function OrdersTable({
           </TableBody>
         </Table>
       </div>
-
-      {selectedOrder && (
-        <OrderDetailsDialog
-          order={selectedOrder}
-          open={isDetailsOpen}
-          onOpenChange={setIsDetailsOpen}
-        />
-      )}
     </>
   );
 }
