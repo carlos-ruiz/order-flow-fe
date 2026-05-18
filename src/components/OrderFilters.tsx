@@ -1,13 +1,6 @@
 import type { Platform, Status } from "../pages/Dashboard";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { Search } from "lucide-react";
+import { Select, TextInput } from "@mantine/core";
 
 interface OrderFiltersProps {
   searchTerm: string;
@@ -33,42 +26,45 @@ export function OrderFilters({
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-        <Input
+        <TextInput
           placeholder="Search orders..."
           value={searchTerm}
           onChange={(e) => {
             onSearchChange(e.target.value);
           }}
-          className="pl-9"
+          leftSection={<Search className="h-4 w-4" />}
         />
       </div>
-      <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="Filter by status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos los estados</SelectItem>
-          {statuses.map((status) => (
-            <SelectItem key={status.id} value={status.name}>
-              {status.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select value={platformsFilter} onValueChange={onPlatformsFilterChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="Filter by platform" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todas las plataformas</SelectItem>
-          {platforms.map((platform) => (
-            <SelectItem key={platform.id} value={platform.name}>
-              {platform.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <Select
+        className="w-full sm:w-[180px]"
+        placeholder="Filter by status"
+        value={statusFilter}
+        onChange={(value) => {
+          onStatusFilterChange(value ?? "all");
+        }}
+        data={[
+          { value: "all", label: "Todos los estados" },
+          ...statuses.map((status) => ({
+            value: status.name,
+            label: status.name,
+          })),
+        ]}
+      />
+      <Select
+        className="w-full sm:w-[180px]"
+        placeholder="Filter by platform"
+        value={platformsFilter}
+        onChange={(value) => {
+          onPlatformsFilterChange(value ?? "all");
+        }}
+        data={[
+          { value: "all", label: "Todas las plataformas" },
+          ...platforms.map((platform) => ({
+            value: platform.name,
+            label: platform.name,
+          })),
+        ]}
+      />
     </div>
   );
 }

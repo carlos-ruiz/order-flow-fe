@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { CreatePlatformDialog } from "../components/CreatePlatformDialog";
 import { type Platform } from "../components/PlatformsTable";
 import { getApiUrl } from "../config/api";
-import { Button } from "../components/ui/button";
 import { PlatformsTable } from "../components/PlatformsTable";
+import { Button, Group, Stack, Text, Title } from "@mantine/core";
 
 export function Platforms() {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function Platforms() {
   }, []);
 
   const handleCreatePlatform = async (
-    payload: Omit<Platform, "id"> | Platform
+    payload: Omit<Platform, "id"> | Platform,
   ) => {
     try {
       if ("id" in payload) {
@@ -35,7 +35,7 @@ export function Platforms() {
           body: JSON.stringify(payload),
         });
         setPlatforms((prev) =>
-          prev.map((p) => (p.id === payload.id ? payload : p))
+          prev.map((p) => (p.id === payload.id ? payload : p)),
         );
       } else {
         // Create new platform
@@ -65,14 +65,14 @@ export function Platforms() {
   };
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "1rem",
-        }}
-      >
+    <Stack gap="md">
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Title order={2}>Plataformas</Title>
+          <Text c="dimmed" size="sm">
+            Configura plataformas y sus comisiones.
+          </Text>
+        </div>
         <Button
           onClick={() => {
             setSelectedPlatform(null);
@@ -81,7 +81,7 @@ export function Platforms() {
         >
           Nueva plataforma
         </Button>
-      </div>
+      </Group>
       <CreatePlatformDialog
         open={openDialog}
         onOpenChange={setOpenDialog}
@@ -99,6 +99,6 @@ export function Platforms() {
           setOpenDialog(true);
         }}
       />
-    </>
+    </Stack>
   );
 }

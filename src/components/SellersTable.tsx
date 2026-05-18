@@ -1,13 +1,5 @@
-import { Button } from "./ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
 import { Check, X } from "lucide-react";
+import { Button, Table } from "@mantine/core";
 
 export interface Seller {
   id: number;
@@ -29,44 +21,41 @@ export function SellersTable({
   readonly onUpdate?: (seller: Seller) => void;
 }) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nombre</TableHead>
-          <TableHead>Apellido</TableHead>
-          <TableHead>Dirección</TableHead>
-          <TableHead>Teléfono</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Activo</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+    <Table striped highlightOnHover withTableBorder>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Nombre</Table.Th>
+          <Table.Th>Apellido</Table.Th>
+          <Table.Th>Dirección</Table.Th>
+          <Table.Th>Teléfono</Table.Th>
+          <Table.Th>Email</Table.Th>
+          <Table.Th>Activo</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
         {sellers.map((seller) => (
-          <TableRow key={seller.id}>
-            <TableCell>{seller.name}</TableCell>
-            <TableCell>{seller.lastName}</TableCell>
-            <TableCell>{seller.address}</TableCell>
-            <TableCell>{seller.phone}</TableCell>
-            <TableCell>{seller.email}</TableCell>
-            <TableCell>
+          <Table.Tr key={seller.id}>
+            <Table.Td>{seller.name}</Table.Td>
+            <Table.Td>{seller.lastName}</Table.Td>
+            <Table.Td>{seller.address}</Table.Td>
+            <Table.Td>{seller.phone}</Table.Td>
+            <Table.Td>{seller.email}</Table.Td>
+            <Table.Td>
               {seller.active ? (
                 <Check className="h-5 w-5 text-green-600" />
               ) : (
                 <X className="h-5 w-5 text-red-800" />
               )}
-            </TableCell>
-            <TableCell className="flex justify-start gap-2">
+            </Table.Td>
+            <Table.Td className="flex justify-start gap-2">
               <Button onClick={() => onUpdate?.(seller)}>Editar</Button>
-              <Button
-                onClick={() => onDelete?.(seller.id)}
-                variant="destructive"
-              >
+              <Button onClick={() => onDelete?.(seller.id)} color="red">
                 Eliminar
               </Button>
-            </TableCell>
-          </TableRow>
+            </Table.Td>
+          </Table.Tr>
         ))}
-      </TableBody>
+      </Table.Tbody>
     </Table>
   );
 }

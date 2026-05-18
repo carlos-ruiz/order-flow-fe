@@ -1,13 +1,5 @@
-import { Button } from "./ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
 import { Check, X } from "lucide-react";
+import { Button, Table } from "@mantine/core";
 
 export interface Customer {
   id: number;
@@ -30,46 +22,43 @@ export function CustomersTable({
   readonly onUpdate?: (customer: Customer) => void;
 }) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nombre</TableHead>
-          <TableHead>Apellido</TableHead>
-          <TableHead>Dirección</TableHead>
-          <TableHead>Teléfono</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Nota</TableHead>
-          <TableHead>Activo</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+    <Table striped highlightOnHover withTableBorder>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Nombre</Table.Th>
+          <Table.Th>Apellido</Table.Th>
+          <Table.Th>Dirección</Table.Th>
+          <Table.Th>Teléfono</Table.Th>
+          <Table.Th>Email</Table.Th>
+          <Table.Th>Nota</Table.Th>
+          <Table.Th>Activo</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
         {customers.map((customer) => (
-          <TableRow key={customer.id}>
-            <TableCell>{customer.name}</TableCell>
-            <TableCell>{customer.lastName}</TableCell>
-            <TableCell>{customer.address}</TableCell>
-            <TableCell>{customer.phone}</TableCell>
-            <TableCell>{customer.email}</TableCell>
-            <TableCell>{customer.note}</TableCell>
-            <TableCell>
+          <Table.Tr key={customer.id}>
+            <Table.Td>{customer.name}</Table.Td>
+            <Table.Td>{customer.lastName}</Table.Td>
+            <Table.Td>{customer.address}</Table.Td>
+            <Table.Td>{customer.phone}</Table.Td>
+            <Table.Td>{customer.email}</Table.Td>
+            <Table.Td>{customer.note}</Table.Td>
+            <Table.Td>
               {customer.active ? (
                 <Check className="h-5 w-5 text-green-600" />
               ) : (
                 <X className="h-5 w-5 text-red-800" />
               )}
-            </TableCell>
-            <TableCell className="flex justify-start gap-2">
+            </Table.Td>
+            <Table.Td className="flex justify-start gap-2">
               <Button onClick={() => onUpdate?.(customer)}>Editar</Button>
-              <Button
-                onClick={() => onDelete?.(customer.id)}
-                variant="destructive"
-              >
+              <Button onClick={() => onDelete?.(customer.id)} color="red">
                 Eliminar
               </Button>
-            </TableCell>
-          </TableRow>
+            </Table.Td>
+          </Table.Tr>
         ))}
-      </TableBody>
+      </Table.Tbody>
     </Table>
   );
 }

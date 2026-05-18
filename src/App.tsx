@@ -4,6 +4,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Customers } from "./pages/Customers";
 import { Platforms } from "./pages/Platforms";
 import { Sellers } from "./pages/Sellers";
+import Order from "./pages/Order";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/customers" element={<Customers />} />
         <Route path="/platforms" element={<Platforms />} />
         <Route path="/sellers" element={<Sellers />} />
+        <Route path="/orders/:id" element={<Order />} />
       </Routes>
     </div>
   );
