@@ -1,5 +1,5 @@
-import { Card } from "./ui/card";
 import { Package, DollarSign, Clock, CheckCircle } from "lucide-react";
+import { Card } from "@mantine/core";
 
 interface OrderStatsProps {
   stats: {
@@ -45,7 +45,7 @@ export function OrderStats({ stats }: Readonly<OrderStatsProps>) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {statCards.map((stat) => (
-        <Card key={stat.title} className="p-6">
+        <Card key={stat.title} withBorder padding="lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-muted-foreground mb-1">{stat.title}</p>

@@ -1,24 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { type Order } from "./OrdersTable";
 import { type Platform, type Status } from "../pages/Dashboard";
+import { Button, Modal, Select, TextInput } from "@mantine/core";
 
 interface CreateOrderDialogProps {
   open: boolean;
@@ -65,6 +48,7 @@ export function CreateOrderDialog({
       platformId: formData.platform,
       totalAmount: Number.parseFloat(formData.totalAmount) || 0,
       statusId: formData.status,
+      items: [],
     });
 
     // Reset form
@@ -84,95 +68,79 @@ export function CreateOrderDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Nuevo pedido</DialogTitle>
-          <DialogDescription>
-            Complete el siguiente formulario para crear un nuevo pedido.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="status">Estado</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value: string) => {
-                    handleChange("status", value);
-                  }}
-                >
-                  <SelectTrigger id="status">
-                    <SelectValue>
-                      {statuses.find((s) => s.id === formData.status)?.name}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statuses
-                      .filter((s) => s.active)
-                      .map((status) => (
-                        <SelectItem key={status.id} value={status.id}>
-                          {status.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="date">Fecha</Label>
-                <Input
-                  id="dateTime"
-                  type="datetime"
-                  value={formData.dateTime}
-                  onChange={(e) => {
-                    handleChange("dateTime", e.target.value);
-                  }}
-                  required
-                />
-              </div>
+    <Modal
+      opened={open}
+      onClose={() => {
+        onOpenChange(false);
+      }}
+      title="Nuevo pedido"
+      size="xl"
+    >
+      <p className="mb-4 text-sm text-gray-600">
+        Complete el siguiente formulario para crear un nuevo pedido.
+      </p>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4 py-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Select
+                label="Estado"
+                value={formData.status}
+                onChange={(value) => {
+                  handleChange("status", value ?? "");
+                }}
+                data={statuses
+                  .filter((s) => s.active)
+                  .map((status) => ({
+                    value: status.id,
+                    label: status.name,
+                  }))}
+              />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="platform">Plataforma</Label>
-                <Select
-                  value={formData.platform}
-                  onValueChange={(value: string) => {
-                    handleChange("platform", value);
-                  }}
-                >
-                  <SelectTrigger id="platform">
-                    <SelectValue>
-                      {platforms.find((p) => p.id === formData.platform)
-                        ?.name || "Selecciona una plataforma"}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {platforms.map((platform) => (
-                      <SelectItem key={platform.id} value={platform.id}>
-                        {platform.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <TextInput
+                id="dateTime"
+                label="Fecha"
+                type="datetime-local"
+                value={formData.dateTime}
+                onChange={(e) => {
+                  handleChange("dateTime", e.target.value);
+                }}
+                required
+              />
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Select
+                label="Plataforma"
+                value={formData.platform}
+                onChange={(value) => {
+                  handleChange("platform", value ?? "");
+                }}
+                placeholder="Selecciona una plataforma"
+                data={platforms.map((platform) => ({
+                  value: platform.id,
+                  label: platform.name,
+                }))}
+              />
+            </div>
+          </div>
+        </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                onOpenChange(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit">Crear Pedido</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="default"
+            onClick={() => {
+              onOpenChange(false);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button type="submit">Crear Pedido</Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

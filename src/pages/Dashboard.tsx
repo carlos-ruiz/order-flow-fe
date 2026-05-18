@@ -4,9 +4,9 @@ import { OrdersTable } from "../components/OrdersTable";
 import type { Order } from "../components/OrdersTable";
 import { OrderFilters } from "../components/OrderFilters";
 import { CreateOrderDialog } from "../components/CreateOrderDialog";
-import { Button } from "../components/ui/button";
 import { Plus } from "lucide-react";
 import { getApiUrl } from "../config/api";
+import { Button, Group, Text, Title } from "@mantine/core";
 
 export type Status = {
   id: string;
@@ -160,22 +160,22 @@ export function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <Group justify="space-between" align="flex-start">
         <div>
-          <h1>Administrador de Pedidos</h1>
-          <p className="text-muted-foreground">
+          <Title order={2}>Administrador de Pedidos</Title>
+          <Text c="dimmed" size="sm">
             Administra y rastrea todos tus pedidos
-          </p>
+          </Text>
         </div>
         <Button
           onClick={() => {
             setIsCreateDialogOpen(true);
           }}
+          leftSection={<Plus className="h-4 w-4" />}
         >
-          <Plus className="mr-2 h-4 w-4" />
           Nuevo Pedido
         </Button>
-      </div>
+      </Group>
 
       {/* Stats */}
       <OrderStats stats={stats} />

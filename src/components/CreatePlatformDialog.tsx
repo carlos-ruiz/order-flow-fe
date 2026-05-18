@@ -1,17 +1,6 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
 import { type Platform } from "./PlatformsTable";
 import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
+import { Button, Modal, Switch, TextInput } from "@mantine/core";
 
 interface CreatePlatformDialogProps {
   open: boolean;
@@ -83,97 +72,89 @@ export function CreatePlatformDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Editar plataforma" : "Nueva plataforma"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Actualiza los detalles de la plataforma."
-              : "Complete el siguiente formulario para crear una nueva plataforma."}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name" className="py-2">
-                Nombre
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => {
-                  handleChange("name", e.target.value);
-                }}
-                placeholder="Nombre de la plataforma"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="customerFee" className="py-2">
-                Comisión cobrada al cliente
-              </Label>
-              <Input
-                id="customerFee"
-                type="number"
-                step="0.01"
-                value={formData.customerFee}
-                onChange={(e) => {
-                  handleChange("customerFee", e.target.value);
-                }}
-                placeholder="0.00"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="sellerCommission" className="py-2">
-                Comisión pagada al vendedor
-              </Label>
-              <Input
-                id="sellerCommission"
-                type="number"
-                step="0.01"
-                value={formData.sellerCommission}
-                onChange={(e) => {
-                  handleChange("sellerCommission", e.target.value);
-                }}
-                placeholder="0.00"
-                required
-              />
-            </div>
-            {isEditing && (
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="active"
-                  checked={formData.active}
-                  onCheckedChange={(checked) => {
-                    handleChange("active", checked);
-                  }}
-                />
-                <Label htmlFor="active">Activo</Label>
-              </div>
-            )}
+    <Modal
+      opened={open}
+      onClose={() => {
+        onOpenChange(false);
+      }}
+      title={isEditing ? "Editar plataforma" : "Nueva plataforma"}
+      size="xl"
+    >
+      <p className="mb-4 text-sm text-gray-600">
+        {isEditing
+          ? "Actualiza los detalles de la plataforma."
+          : "Complete el siguiente formulario para crear una nueva plataforma."}
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <TextInput
+              id="name"
+              label="Nombre"
+              value={formData.name}
+              onChange={(e) => {
+                handleChange("name", e.target.value);
+              }}
+              placeholder="Nombre de la plataforma"
+              required
+            />
           </div>
-          <DialogFooter>
-            <div className="flex justify-start gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  onOpenChange(false);
+          <div>
+            <TextInput
+              id="customerFee"
+              label="Comisión cobrada al cliente"
+              type="number"
+              step="0.01"
+              value={formData.customerFee}
+              onChange={(e) => {
+                handleChange("customerFee", e.target.value);
+              }}
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <div>
+            <TextInput
+              id="sellerCommission"
+              label="Comisión pagada al vendedor"
+              type="number"
+              step="0.01"
+              value={formData.sellerCommission}
+              onChange={(e) => {
+                handleChange("sellerCommission", e.target.value);
+              }}
+              placeholder="0.00"
+              required
+            />
+          </div>
+          {isEditing && (
+            <div className="flex items-center gap-2">
+              <Switch
+                id="active"
+                label="Activo"
+                checked={formData.active}
+                onChange={(event) => {
+                  handleChange("active", event.currentTarget.checked);
                 }}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isEditing ? "Guardar cambios" : "Crear plataforma"}
-              </Button>
+              />
             </div>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          )}
+        </div>
+        <div className="flex justify-start gap-2">
+          <Button
+            type="button"
+            variant="default"
+            onClick={() => {
+              onOpenChange(false);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button type="submit">
+            {isEditing ? "Guardar cambios" : "Crear plataforma"}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

@@ -1,20 +1,6 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import { Badge } from "./ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ActionIcon, Badge, Menu, Table } from "@mantine/core";
 
 interface OrderItem {
   id: string;
@@ -57,91 +43,96 @@ export function OrdersTable({
   const getStatusColor = (status: Order["statusName"]) => {
     switch (status) {
       case "processing":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-100";
+        return "blue";
       case "completed":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-100";
+        return "violet";
       case "canceled":
-        return "bg-red-100 text-red-800 hover:bg-red-100";
+        return "red";
       default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        return "gray";
     }
   };
 
   return (
     <>
       <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID de Pedido</TableHead>
-              <TableHead>Plataforma</TableHead>
-              <TableHead>Estatus</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead className="text-right">Monto Total</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <Table striped highlightOnHover withTableBorder>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>ID de Pedido</Table.Th>
+              <Table.Th>Plataforma</Table.Th>
+              <Table.Th>Estatus</Table.Th>
+              <Table.Th>Fecha</Table.Th>
+              <Table.Th className="text-right">Monto Total</Table.Th>
+              <Table.Th className="text-right">Acciones</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
             {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>{order.id}</TableCell>
-                <TableCell>{order.platformName || "N/A"}</TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(order.statusName)}>
+              <Table.Tr key={order.id}>
+                <Table.Td>{order.id}</Table.Td>
+                <Table.Td>{order.platformName || "N/A"}</Table.Td>
+                <Table.Td>
+                  <Badge
+                    color={getStatusColor(order.statusName)}
+                    variant="light"
+                  >
                     {order.statusName || "N/A"}
                   </Badge>
-                </TableCell>
-                <TableCell>{order.dateTime}</TableCell>
-                <TableCell className="text-right">
+                </Table.Td>
+                <Table.Td>{order.dateTime}</Table.Td>
+                <Table.Td className="text-right">
                   {order.totalAmount.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
+                </Table.Td>
+                <Table.Td className="text-right">
+                  <Menu shadow="md" width={220} position="bottom-end">
+                    <Menu.Target>
+                      <ActionIcon variant="subtle" aria-label="Acciones">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        leftSection={<Eye className="h-4 w-4" />}
                         onClick={() => {
                           if (order.id) {
                             void navigate(`/orders/${order.id}`);
                           }
                         }}
                       >
-                        <Eye className="mr-2 h-4 w-4" />
                         Ver Detalles
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
+                      </Menu.Item>
+                      <Menu.Item
+                        leftSection={<Edit className="h-4 w-4" />}
                         onClick={() => {
                           onStatusChange(order.id, "completed");
                         }}
                       >
-                        <Edit className="mr-2 h-4 w-4" />
                         Marcar como completado
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
+                      </Menu.Item>
+                      <Menu.Item
+                        leftSection={<Edit className="h-4 w-4" />}
                         onClick={() => {
                           onStatusChange(order.id, "canceled");
                         }}
                       >
-                        <Edit className="mr-2 h-4 w-4" />
                         Cancelar Pedido
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
+                      </Menu.Item>
+                      <Menu.Item
+                        color="red"
+                        leftSection={<Trash2 className="h-4 w-4" />}
                         onClick={() => {
                           onDelete(order.id);
                         }}
-                        className="text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
                         Eliminar Pedido
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                </Table.Td>
+              </Table.Tr>
             ))}
-          </TableBody>
+          </Table.Tbody>
         </Table>
       </div>
     </>

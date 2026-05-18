@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getApiUrl } from "../config/api";
 import type { Order } from "../components/OrdersTable";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/ui/table";
+import { Paper, Table, Text, Title } from "@mantine/core";
 
 export default function Order() {
   const { id } = useParams<{ id: string }>();
@@ -46,34 +39,37 @@ export default function Order() {
   }, [id]);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        Órden de {order?.platformName || "N/A"} del dia {date}
-      </h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID de Producto</TableHead>
-            <TableHead>Nombre del Producto</TableHead>
-            <TableHead>Nombre del Cliente</TableHead>
-            <TableHead>Cantidad</TableHead>
-            <TableHead>Precio Unitario</TableHead>
-            <TableHead>Subtotal</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {order?.items.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.id}</TableCell>
-              <TableCell>{item.product}</TableCell>
-              <TableCell>{item.customerName}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>{item.price.toFixed(2)}</TableCell>
-              <TableCell>{(item.price * item.quantity).toFixed(2)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="space-y-4">
+      <div>
+        <Title order={2}>Orden de {order?.platformName || "N/A"}</Title>
+        <Text c="dimmed">Fecha: {date || "N/A"}</Text>
+      </div>
+      <Paper withBorder radius="md" p="md">
+        <Table striped highlightOnHover withTableBorder>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>ID de Producto</Table.Th>
+              <Table.Th>Nombre del Producto</Table.Th>
+              <Table.Th>Nombre del Cliente</Table.Th>
+              <Table.Th>Cantidad</Table.Th>
+              <Table.Th>Precio Unitario</Table.Th>
+              <Table.Th>Subtotal</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {order?.items.map((item) => (
+              <Table.Tr key={item.id}>
+                <Table.Td>{item.id}</Table.Td>
+                <Table.Td>{item.product}</Table.Td>
+                <Table.Td>{item.customerName}</Table.Td>
+                <Table.Td>{item.quantity}</Table.Td>
+                <Table.Td>{item.price.toFixed(2)}</Table.Td>
+                <Table.Td>{(item.price * item.quantity).toFixed(2)}</Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+      </Paper>
     </div>
   );
 }

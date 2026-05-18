@@ -1,17 +1,6 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
 import type { Seller } from "./SellersTable";
+import { Button, Modal, Switch, TextInput } from "@mantine/core";
 
 interface CreateSellerDialogProps {
   open: boolean;
@@ -93,122 +82,110 @@ export function CreateSellerDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Editar vendedor" : "Nuevo vendedor"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Actualiza los detalles del vendedor."
-              : "Complete el siguiente formulario para crear un nuevo vendedor."}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name" className="py-2">
-                Nombre
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => {
-                  handleChange("name", e.target.value);
-                }}
-                placeholder="Nombre del vendedor"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="lastName" className="py-2">
-                Apellido
-              </Label>
-              <Input
-                id="lastName"
-                type="text"
-                value={formData.lastName}
-                onChange={(e) => {
-                  handleChange("lastName", e.target.value);
-                }}
-                placeholder="Apellido del vendedor"
-              />
-            </div>
-            <div>
-              <Label htmlFor="address" className="py-2">
-                Dirección
-              </Label>
-              <Input
-                id="address"
-                type="text"
-                value={formData.address}
-                onChange={(e) => {
-                  handleChange("address", e.target.value);
-                }}
-                placeholder="Direccion del vendedor"
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone" className="py-2">
-                Teléfono
-              </Label>
-              <Input
-                id="phone"
-                type="text"
-                value={formData.phone}
-                onChange={(e) => {
-                  handleChange("phone", e.target.value);
-                }}
-                placeholder="Teléfono del vendedor"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="email" className="py-2">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => {
-                  handleChange("email", e.target.value);
-                }}
-                placeholder="Correo electrónico del vendedor"
-              />
-            </div>
-            {isEditing && (
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="active"
-                  checked={formData.active}
-                  onCheckedChange={(checked) => {
-                    handleChange("active", checked);
-                  }}
-                />
-                <Label htmlFor="active">Activo</Label>
-              </div>
-            )}
+    <Modal
+      opened={open}
+      onClose={() => {
+        onOpenChange(false);
+      }}
+      title={isEditing ? "Editar vendedor" : "Nuevo vendedor"}
+      size="xl"
+    >
+      <p className="mb-4 text-sm text-gray-600">
+        {isEditing
+          ? "Actualiza los detalles del vendedor."
+          : "Complete el siguiente formulario para crear un nuevo vendedor."}
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <TextInput
+              id="name"
+              label="Nombre"
+              value={formData.name}
+              onChange={(e) => {
+                handleChange("name", e.target.value);
+              }}
+              placeholder="Nombre del vendedor"
+              required
+            />
           </div>
-          <DialogFooter>
-            <div className="flex justify-start gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  onOpenChange(false);
+          <div>
+            <TextInput
+              id="lastName"
+              label="Apellido"
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => {
+                handleChange("lastName", e.target.value);
+              }}
+              placeholder="Apellido del vendedor"
+            />
+          </div>
+          <div>
+            <TextInput
+              id="address"
+              label="Dirección"
+              type="text"
+              value={formData.address}
+              onChange={(e) => {
+                handleChange("address", e.target.value);
+              }}
+              placeholder="Direccion del vendedor"
+            />
+          </div>
+          <div>
+            <TextInput
+              id="phone"
+              label="Teléfono"
+              type="text"
+              value={formData.phone}
+              onChange={(e) => {
+                handleChange("phone", e.target.value);
+              }}
+              placeholder="Teléfono del vendedor"
+              required
+            />
+          </div>
+          <div>
+            <TextInput
+              id="email"
+              label="Email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => {
+                handleChange("email", e.target.value);
+              }}
+              placeholder="Correo electrónico del vendedor"
+            />
+          </div>
+          {isEditing && (
+            <div className="flex items-center gap-2">
+              <Switch
+                id="active"
+                label="Activo"
+                checked={formData.active}
+                onChange={(event) => {
+                  handleChange("active", event.currentTarget.checked);
                 }}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isEditing ? "Guardar cambios" : "Crear vendedor"}
-              </Button>
+              />
             </div>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          )}
+        </div>
+        <div className="flex justify-start gap-2">
+          <Button
+            type="button"
+            variant="default"
+            onClick={() => {
+              onOpenChange(false);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button type="submit">
+            {isEditing ? "Guardar cambios" : "Crear vendedor"}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

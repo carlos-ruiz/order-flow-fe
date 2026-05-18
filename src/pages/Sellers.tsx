@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { CreateSellerDialog } from "../components/CreateSellerDialog";
 import { getApiUrl } from "../config/api";
-import { Button } from "../components/ui/button";
 import { SellersTable, type Seller } from "../components/SellersTable";
-import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { AlertCircle, CheckCircle } from "lucide-react";
+import { Alert, Button, Group, Stack, Text, Title } from "@mantine/core";
 
 export function Sellers() {
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -147,14 +146,14 @@ export function Sellers() {
   };
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "1rem",
-        }}
-      >
+    <Stack gap="md">
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Title order={2}>Vendedores</Title>
+          <Text c="dimmed" size="sm">
+            Administra y edita la información de tus vendedores.
+          </Text>
+        </div>
         <Button
           onClick={() => {
             setSelectedSeller(null);
@@ -163,7 +162,7 @@ export function Sellers() {
         >
           Nuevo vendedor
         </Button>
-      </div>
+      </Group>
       <CreateSellerDialog
         open={openDialog}
         onOpenChange={setOpenDialog}
@@ -184,17 +183,21 @@ export function Sellers() {
 
       <div>
         {alert && (
-          <Alert variant={alert.type === "error" ? "destructive" : "default"}>
-            {alert.type === "error" ? (
-              <AlertCircle className="h-4 w-4" />
-            ) : (
-              <CheckCircle className="h-4 w-4" />
-            )}
-            <AlertTitle>{alert.title}</AlertTitle>
-            <AlertDescription>{alert.message}</AlertDescription>
+          <Alert
+            color={alert.type === "error" ? "red" : "green"}
+            title={alert.title}
+            icon={
+              alert.type === "error" ? (
+                <AlertCircle className="h-4 w-4" />
+              ) : (
+                <CheckCircle className="h-4 w-4" />
+              )
+            }
+          >
+            {alert.message}
           </Alert>
         )}
       </div>
-    </>
+    </Stack>
   );
 }
